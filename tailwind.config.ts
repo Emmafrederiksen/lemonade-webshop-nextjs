@@ -2,8 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
     content: [
-        "./src/app/**/*.{js,ts,jsx,tsx}",
-        "./src/components/**/*.{js,ts,jsx,tsx}",
+        "./src/**/*.{js,ts,jsx,tsx,mdx}",
     ],
 
     theme: {
@@ -32,8 +31,8 @@ export default {
                 },
 
                 surface: {
-                    slideCart: "#FFFBF5",
-                    navBar: "#FFFBF5",
+                    slidecart: "#FFFBF5",
+                    navbar: "#FFFBF5",
                     footer: "#FFF5E6",
                 },
             },  
@@ -52,7 +51,14 @@ export default {
 
             boxShadow: {
                 card: "0 8px 20px rgba(0,0,0,0.05)",
-            }
+            },
+
+            fontFamily: {
+
+                heading: ["var(--font-serif)"],
+                body: ["var(--font-sans)"],
+
+            },
         }
     }
 } satisfies Config
