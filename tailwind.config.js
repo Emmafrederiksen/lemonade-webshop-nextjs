@@ -33,6 +33,7 @@ module.exports = {
           slidecart: "#FFFBF5",
           navbar: "#FFFBF5",
           footer: "#FFF5E6",
+          secondarybtn: "#FFFBF5",
         },
       },
 

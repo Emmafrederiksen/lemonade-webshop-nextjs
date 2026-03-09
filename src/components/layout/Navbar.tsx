@@ -50,7 +50,7 @@ export default function Navbar() {
   return (
 
     <nav
-        className={`sticky top-0 z-50 w-full backdrop-blur-md border-b border-border transition-all duration-300
+        className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300
         ${scrolled ? "bg-surface-navbar/95 shadow-md" : "bg-surface-navbar/80"}
         `}
         >
@@ -76,7 +76,7 @@ export default function Navbar() {
                 }`}
             />
 
-            <span className="font-heading text-2xl text-heading-md text-brand-textDark">
+            <span className="font-heading text-heading-md text-brand-textDark">
               Lemonade Stand
             </span>
 
