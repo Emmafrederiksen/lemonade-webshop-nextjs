@@ -39,7 +39,7 @@ module.exports = {
 
       backgroundImage: {
         heroGradient: "linear-gradient(90deg,#FFE59D 0%,#FFFBF5 60%,#FFFBF5 100%)",
-        cardGradient: "linear-gradient(180deg,#FF5858 0%,#FFC8C8 100%)",
+        cardGradient: "linear-gradient(180deg, rgba(255,88,88,0.3) 0%, rgba(255,200,200,0.3) 100%)"
       },
 
       borderRadius: {

@@ -27,14 +27,14 @@ export default function Hero() {
             <div className="flex gap-4">
 
               <button className="px-5 py-3 md:px-6 md:py-3 bg-brand-primary text-white rounded-full font-body font-medium
-                shadow-md hover:shadow-lg hover:-translate-y-[2px] hover:brightness-105
+                shadow-md hover:shadow-lg  hover:brightness-105
                 transition-all duration-200">
                   Order Now
               </button>
 
               <button className="px-5 py-3 md:px-6 md:py-3 border border-border text-brand-textDark bg-surface-secondarybtn
                 rounded-full font-body font-medium
-                hover:border-brand-primary hover:text-brand-primary hover:-translate-y-[2px]
+                hover:border-brand-primary hover:text-brand-primary
                 transition-all duration-200">
                   View Menu
               </button>

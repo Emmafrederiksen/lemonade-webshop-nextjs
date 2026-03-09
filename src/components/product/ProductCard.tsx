@@ -11,37 +11,37 @@ type Product = {
 export default function ProductCard({ product }: { product: Product }) {
     return (
 
-        <div className="bg-white rounded-card shadow-card p-4 flex flex-col">
+        <div className="bg-slidecart rounded-card shadow-card p-4 flex flex-col h-full transition duration-300 hover:-translate-y-1 hover:shadow-lg">
 
-            <div className="bg-pink-200 rounded-xl p-6 flex justify-center">
-                <Image 
-                    src={product.image}
+            <div className="bg-cardGradient rounded-xl flex justify-center">
+                <Image
+                    src={`/${product.image}`}
                     alt={product.name}
-                    width={180}
-                    height={180}
+                    width={250}
+                    height={250}
                 />
             </div>
 
-            <div className="mt-4 flex justify-between items-center">
+            <div className="mt-5 flex justify-between items-center">
 
-                <h3 className="font-heading text-heading-sm text-brand-textDark">
-                    ${product.name}
+                <h3 className="font-heading text-heading-md text-brand-textDark">
+                    {product.name}
                 </h3>
 
-                <span className="font-heading text-brand-textDark">
-                    ${product.price.toFixed(2)}
+                <span className="font-heading text-heading-md text-brand-textDark">
+                    ${Number(product.price).toFixed(2)}
                 </span>
 
             </div>
 
-            <p className="text-small text-brand-textMuted mt-2">
+            <p className="text-body text-brand-textDark mt-4 mb-6">
                 {product.description}
             </p>    
 
-            <button className="mt-4 bg-brand-primary text-brand-textLight py-2 rounded-full hover:brightness-105 transition">
+            <button className="mt-auto bg-brand-primary text-brand-textLight py-2 rounded-full hover:brightness-105 transition">
                 Add to Cart
             </button>
-            
+
         </div>
         
     )
