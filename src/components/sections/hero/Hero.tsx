@@ -1,9 +1,10 @@
 import Container from "@/components/layout/Container"
 import Image from "next/image"
+import React from "react"
 
 type HeroProps = {
   title: string
-  description: string
+  description: React.ReactNode
   image: string
   showButtons?: boolean
 }
@@ -32,7 +33,7 @@ export default function Hero({
 
             <div className="w-20 h-[2px] bg-brand-primary mt-4 rounded-full"></div>
 
-            <p className="font-body text-body text-brand-textMuted max-w-md">
+            <p className="font-body text-body text-brand-darkText max-w-md">
               {description}
             </p>
 
