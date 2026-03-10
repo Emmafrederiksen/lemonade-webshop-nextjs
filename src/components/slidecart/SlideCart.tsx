@@ -302,7 +302,7 @@ export default function SlideCart() {
                 <span>${total.toFixed(2)}</span>
               </div>
 
-              <Link href="/checkout" className="w-full bg-brand-primary text-center text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition mt-1">
+              <Link href="/checkout" onClick={closeCart} className="w-full bg-brand-primary text-center text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition mt-1">
                 Checkout
               </Link>
 

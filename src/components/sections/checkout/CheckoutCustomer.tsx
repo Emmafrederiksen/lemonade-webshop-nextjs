@@ -1,13 +1,52 @@
 "use client"
 
 import { useCart } from "@/context/CartContext"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Container from "@/components/layout/Container"
 import Image from "next/image"
+import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
 
 export default function CheckoutCustomer() {
 
+  /*
+  |--------------------------------------------------------------------------
+  | HOOKS
+  |--------------------------------------------------------------------------
+  | Alle hooks skal være øverst — Rules of Hooks.
+  | Ingen hooks må kaldes efter en tidlig return.
+  |
+  */
+
   const { cart, removeFromCart, updateQuantity } = useCart()
+
+  const [mounted, setMounted] = useState(false)
+  const [confirmItem, setConfirmItem] = useState<number | null>(null)
+  const [confirmName, setConfirmName] = useState("")
+
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+  })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  /*
+  |--------------------------------------------------------------------------
+  | MOUNTED CHECK
+  |--------------------------------------------------------------------------
+  | Forhindrer hydration fejl fordi localStorage ikke findes på serveren.
+  | Alle hooks er kaldt inden denne check — det er påkrævet af React.
+  |
+  */
+
+  if (!mounted) return null
+
 
   /*
   |--------------------------------------------------------------------------
@@ -19,20 +58,12 @@ export default function CheckoutCustomer() {
   const delivery = subtotal >= 15 ? 0 : 3
   const total = subtotal + delivery
 
+
   /*
   |--------------------------------------------------------------------------
-  | FORM STATE
+  | FORM HANDLER
   |--------------------------------------------------------------------------
   */
-
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-  })
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -214,7 +245,10 @@ export default function CheckoutCustomer() {
                     </div>
 
                     <button
-                      onClick={() => removeFromCart(item.product_id)}
+                      onClick={() => {
+                        setConfirmItem(item.product_id)
+                        setConfirmName(item.name)
+                      }}
                       className="text-danger-text hover:brightness-75 transition text-sm"
                     >
                       🗑️
@@ -224,7 +258,14 @@ export default function CheckoutCustomer() {
                   <div className="flex justify-end items-center gap-2 mt-auto pt-2">
 
                     <button
-                      onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                      onClick={() => {
+                        if (item.quantity === 1) {
+                          setConfirmItem(item.product_id)
+                          setConfirmName(item.name)
+                        } else {
+                          updateQuantity(item.product_id, item.quantity - 1)
+                        }
+                      }}
                       className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-small hover:border-brand-primary hover:text-brand-primary transition"
                     >
                       −
@@ -271,7 +312,6 @@ export default function CheckoutCustomer() {
               <span>${total.toFixed(2)}</span>
             </div>
 
-            {/* Vis besparelse hvis gratis levering */}
             {delivery === 0 && (
               <p className="text-small text-success-DEFAULT">
                 You saved <span className="font-semibold">$3</span> on delivery! 🎉
@@ -283,6 +323,16 @@ export default function CheckoutCustomer() {
         </div>
 
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmItem !== null}
+        productName={confirmName}
+        onConfirm={() => {
+          if (confirmItem !== null) removeFromCart(confirmItem)
+          setConfirmItem(null)
+        }}
+        onCancel={() => setConfirmItem(null)}
+      />
 
     </Container>
 
