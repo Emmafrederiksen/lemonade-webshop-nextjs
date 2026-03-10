@@ -27,6 +27,8 @@ module.exports = {
 
         danger: {
           DEFAULT: "#DE0A3D",
+          text: "#DE0A3D",
+          bg: "#DE0A3D",  
         },
 
         surface: {

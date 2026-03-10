@@ -1,7 +1,9 @@
 "use client"
 
 import Image from "next/image"
+import { useState, useEffect } from "react"
 import { useCart } from "@/context/CartContext"
+import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
 
 export default function SlideCart() {
 
@@ -18,16 +20,45 @@ export default function SlideCart() {
 
   /*
   |--------------------------------------------------------------------------
+  | CONFIRM DIALOG STATE
+  |--------------------------------------------------------------------------
+  | confirmItem → product_id på det produkt der skal slettes (null = ingen dialog)
+  | confirmName → produktnavn der vises i dialogen
+  |
+  */
+
+  const [confirmItem, setConfirmItem] = useState<number | null>(null)
+  const [confirmName, setConfirmName] = useState("")
+
+  /*
+  |--------------------------------------------------------------------------
+  | MOUNTED CHECK
+  |--------------------------------------------------------------------------
+  | Forhindrer hydration fejl fordi localStorage ikke findes på serveren.
+  | Vi venter med at rendere indtil komponenten er mounted i browseren.
+  |
+  */
+ 
+  const [mounted, setMounted] = useState(false)
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) return null
+
+
+  /*
+  |--------------------------------------------------------------------------
   | BEREGNINGER
   |--------------------------------------------------------------------------
   | subtotal  → sum af alle produkter (pris × antal)
-  | delivery  → gratis ved $15, ellers vis hvad der mangler
+  | delivery  → gratis ved $15, ellers fast $3 gebyr
   | total     → subtotal + delivery
   |
   */
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = subtotal >= 15 ? 0 : 3  // ← fast $3 gebyr indtil $15
+  const delivery = subtotal >= 15 ? 0 : 3
   const total = subtotal + delivery
 
 
@@ -82,14 +113,16 @@ export default function SlideCart() {
         |--------------------------------------------------------------------------
         */}
 
-        {/* Navbar spacer */}
         <div className="h-20 flex-shrink-0 border-b border-border flex items-center justify-between px-6">
-            <h2 className="font-heading text-heading-md text-brand-textDark">
-                Your cart
-            </h2>
-            <button onClick={closeCart} className="text-brand-textMuted hover:text-brand-textDark transition text-xl">
-                ✕
-            </button>
+          <h2 className="font-heading text-heading-md text-brand-textDark">
+            Your cart
+          </h2>
+          <button
+            onClick={closeCart}
+            className="text-brand-textMuted hover:text-brand-textDark transition text-xl"
+          >
+            ✕
+          </button>
         </div>
 
 
@@ -97,8 +130,6 @@ export default function SlideCart() {
         |--------------------------------------------------------------------------
         | TOM CART
         |--------------------------------------------------------------------------
-        | Vises når cart er tom.
-        |
         */}
 
         {cart.length === 0 ? (
@@ -130,15 +161,18 @@ export default function SlideCart() {
             |--------------------------------------------------------------------------
             | DELIVERY BANNER
             |--------------------------------------------------------------------------
-            | Viser enten "Free delivery applied!" eller hvor meget der mangler.
-            |
             */}
 
-            <div className="mx-6 mt-4 px-4 py-2 rounded-xl border border-success/30 bg-success/5 text-small text-success-DEFAULT flex items-center gap-2">
-              {delivery === 0
-                ? "🚚 Free delivery applied!"
-                : `🚚 You are $${(15 - subtotal).toFixed(2)} away from free delivery!`
-              }
+            <div className={`mx-6 mt-4 px-4 py-2 rounded-xl border text-small flex items-center gap-2
+                ${delivery === 0
+                    ? "border-success/30 bg-success/5 text-success-DEFAULT"
+                    : "border-border bg-warning/5 text-brand-textMuted"
+                }
+                `}>
+                {delivery === 0
+                    ? "🚚 Free delivery applied!"
+                    : `🚚 You are $${(15 - subtotal).toFixed(2)} away from free delivery!`
+                }
             </div>
 
 
@@ -146,8 +180,6 @@ export default function SlideCart() {
             |--------------------------------------------------------------------------
             | PRODUKTER
             |--------------------------------------------------------------------------
-            | Vi mapper over cart og viser hvert produkt.
-            |
             */}
 
             <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
@@ -156,66 +188,85 @@ export default function SlideCart() {
 
                 <div key={item.product_id} className="flex gap-4 bg-white rounded-2xl p-3 shadow-card">
 
-                    {/* Billede */}
-                    <div className="bg-cardGradient rounded-xl flex-shrink-0">
-                        <Image
-                        src={`/${item.image}`}
-                        alt={item.name}
-                        width={64}
-                        height={64}
-                        className="rounded-xl object-cover"
-                        />
-                    </div>
+                  {/* Billede */}
+                  <div className="bg-cardGradient rounded-xl flex-shrink-0">
+                    <Image
+                      src={`/${item.image}`}
+                      alt={item.name}
+                      width={64}
+                      height={64}
+                      className="rounded-xl object-cover"
+                    />
+                  </div>
 
-                    {/* Højre side */}
-                    <div className="flex-1 flex flex-col">
+                  {/* Højre side */}
+                  <div className="flex-1 flex flex-col">
 
-                        {/* Top række — navn og skraldespand */}
-                        <div className="flex items-start justify-between">
+                    {/* Top række — navn og skraldespand */}
+                    <div className="flex items-start justify-between">
 
-                            <div>
-                                <p className="font-heading text-heading-sm text-brand-textDark">
-                                {item.name}
-                                </p>
-                                <p className="text-small text-brand-textMuted">
-                                ${Number(item.price).toFixed(2)}
-                                </p>
-                            </div>
+                      <div>
+                        <p className="font-heading text-heading-sm text-brand-textDark">
+                          {item.name}
+                        </p>
+                        <p className="text-small text-brand-textMuted">
+                          ${Number(item.price).toFixed(2)}
+                        </p>
+                      </div>
 
-                            {/* Skraldespand øverst til højre */}
-                            <button
-                                onClick={() => removeFromCart(item.product_id)}
-                                className="text-danger-DEFAULT hover:brightness-75 transition text-sm"
-                            >
-                                🗑️
-                            </button>
+                      {/*
+                      |--------------------------------------------------------------------------
+                      | SLET KNAP
+                      |--------------------------------------------------------------------------
+                      | Åbner confirm dialog i stedet for at slette direkte.
+                      | Vi gemmer product_id og navn så dialogen ved hvad der skal slettes.
+                      |
+                      */}
 
-                        </div>
-
-                        {/* Quantity knapper nederst til højre */}
-                        <div className="flex justify-end items-center gap-2 mt-auto pt-2">
-
-                            <button
-                                onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                                className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-small hover:border-brand-primary hover:text-brand-primary transition"
-                            >
-                                −
-                            </button>
-
-                            <span className="text-small text-brand-textDark w-4 text-center">
-                                {item.quantity}
-                            </span>
-
-                            <button
-                                onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                                className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-small hover:border-brand-primary hover:text-brand-primary transition"
-                            >
-                                +
-                            </button>
-
-                        </div>
+                      <button
+                        onClick={() => {
+                          setConfirmItem(item.product_id)
+                          setConfirmName(item.name)
+                        }}
+                        className="text-danger-text hover:brightness-75 transition text-sm"
+                      >
+                        🗑️
+                      </button>
 
                     </div>
+
+                    {/* Quantity knapper nederst til højre */}
+                    <div className="flex justify-end items-center gap-2 mt-auto pt-2">
+
+                      <button
+                        onClick={() => {
+                            if (item.quantity === 1) {
+                            // Sidste item — vis confirm dialog
+                            setConfirmItem(item.product_id)
+                            setConfirmName(item.name)
+                            } else {
+                            updateQuantity(item.product_id, item.quantity - 1)
+                            }
+                        }}
+                        className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-small hover:border-brand-primary hover:text-brand-primary transition"
+                        >
+                        −
+                      </button>
+
+                      <span className="text-small text-brand-textDark w-4 text-center">
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                        className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-small hover:border-brand-primary hover:text-brand-primary transition"
+                      >
+                        +
+                      </button>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
@@ -230,7 +281,7 @@ export default function SlideCart() {
             |--------------------------------------------------------------------------
             */}
 
-            <div className="px-6 py-5 border-t border-border flex flex-col gap-3">
+            <div className="px-6 py-5 border-t border-border flex flex-col gap-3 pb-8">
 
               <div className="flex justify-between text-small text-brand-textMuted">
                 <span>Subtotal:</span>
@@ -242,7 +293,10 @@ export default function SlideCart() {
                 <span>${delivery.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-between font-heading text-heading-sm text-brand-textDark border-t border-border pt-3">
+              {/* Separator */}
+              <div className="border-t border-border w-full" />
+
+              <div className="flex justify-between font-heading text-heading-sm text-brand-textDark">
                 <span>Total:</span>
                 <span>${total.toFixed(2)}</span>
               </div>
@@ -252,7 +306,7 @@ export default function SlideCart() {
               </button>
 
               {/* Betalingsikoner */}
-              <div className="flex justify-center items-center gap-3 mt-1 pb-8">
+              <div className="flex justify-center items-center gap-3 mt-1 pb-4">
                 <span className="text-small text-brand-textMuted">💳</span>
                 <span className="text-small text-brand-textMuted">Mastercard</span>
                 <span className="text-small text-brand-textMuted">Visa</span>
@@ -266,6 +320,27 @@ export default function SlideCart() {
         )}
 
       </div>
+
+
+      {/*
+      |--------------------------------------------------------------------------
+      | CONFIRM DIALOG
+      |--------------------------------------------------------------------------
+      | Vises når confirmItem ikke er null.
+      | onConfirm → fjerner produktet og lukker dialogen.
+      | onCancel  → lukker dialogen uden at fjerne.
+      |
+      */}
+
+      <ConfirmDialog
+        isOpen={confirmItem !== null}
+        productName={confirmName}
+        onConfirm={() => {
+          if (confirmItem !== null) removeFromCart(confirmItem)
+          setConfirmItem(null)
+        }}
+        onCancel={() => setConfirmItem(null)}
+      />
 
     </>
   )

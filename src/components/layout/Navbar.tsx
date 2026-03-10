@@ -48,6 +48,14 @@ export default function Navbar() {
 
   }, [])
 
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])  
+
+  
+
 
   return (
 
@@ -165,8 +173,9 @@ export default function Navbar() {
                 🛒
               </button>
 
+              
               <span className="absolute -top-2 -right-2 bg-warning text-white text-small w-5 h-5 rounded-full flex items-center justify-center">
-                {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                {mounted ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0}
               </span>
 
             </div>
