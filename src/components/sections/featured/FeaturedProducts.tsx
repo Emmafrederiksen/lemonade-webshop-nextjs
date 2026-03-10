@@ -3,7 +3,7 @@ import ProductCard from "@/components/product/ProductCard"
 
 async function getFeaturedProducts() {
 
-  const res = await fetch("http://localhost:3000/api/products", {
+  const res = await fetch("http://localhost:3000/api/products/featured", {
     cache: "no-store",
   })
 
