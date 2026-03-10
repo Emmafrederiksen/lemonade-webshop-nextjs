@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useCart } from "@/context/CartContext"
@@ -301,9 +302,9 @@ export default function SlideCart() {
                 <span>${total.toFixed(2)}</span>
               </div>
 
-              <button className="w-full bg-brand-primary text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition mt-1">
+              <Link href="/checkout" className="w-full bg-brand-primary text-center text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition mt-1">
                 Checkout
-              </button>
+              </Link>
 
               {/* Betalingsikoner */}
               <div className="flex justify-center items-center gap-3 mt-1 pb-4">
