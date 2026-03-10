@@ -1,48 +1,58 @@
-{/* Checkout header */}
+"use client"
 
-export default function checkout() {
-    return (
+import { useState } from "react"
+import CheckoutCustomer from "@/components/sections/checkout/CheckoutCustomer"
+import CheckoutOwner from "@/components/sections/checkout/CheckoutOwner"
 
-        <main>
-            {/* Checkout header */}
-            <div className="bg-heroGradient py-12 flex flex-col items-center gap-6">
+type View = "customer" | "owner"
 
-                <h1 className="font-heading text-heading-xl text-brand-textDark">
-                    Checkout
-                </h1>
+export default function CheckoutPage() {
 
-                {/* Toggle knapper */}
-                <div className="flex rounded-full border border-border overflow-hidden">
+  const [view, setView] = useState<View>("customer")
 
-                    <button
-                    onClick={() => setView("customer")}
-                    className={`px-6 py-2 text-small font-semibold transition
-                        ${view === "customer"
-                        ? "bg-brand-primary text-white"
-                        : "bg-white text-brand-textMuted"
-                        }
-                    `}
-                    >
-                    Customer
-                    </button>
+  return (
+    <main>
 
-                    <button
-                    onClick={() => setView("owner")}
-                    className={`px-6 py-2 text-small font-semibold transition
-                        ${view === "owner"
-                        ? "bg-brand-primary text-white"
-                        : "bg-white text-brand-textMuted"
-                        }
-                    `}
-                    >
-                    Owner
-                    </button>
+      {/* Header med toggle */}
+      <div className="bg-heroGradient py-12 flex flex-col items-center gap-6">
 
-                </div>
+        <h1 className="font-heading text-heading-xl text-brand-textDark">
+          Checkout
+        </h1>
 
-            </div>
+        <div className="flex rounded-full border border-border overflow-hidden">
 
-        </main>
-        
-    )
+          <button
+            onClick={() => setView("customer")}
+            className={`px-6 py-2 text-small font-semibold transition
+              ${view === "customer"
+                ? "bg-brand-primary text-white"
+                : "bg-white text-brand-textMuted"
+              }
+            `}
+          >
+            Customer
+          </button>
+
+          <button
+            onClick={() => setView("owner")}
+            className={`px-6 py-2 text-small font-semibold transition
+              ${view === "owner"
+                ? "bg-brand-primary text-white"
+                : "bg-white text-brand-textMuted"
+              }
+            `}
+          >
+            Owner
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* Indhold */}
+      {view === "customer" ? <CheckoutCustomer /> : <CheckoutOwner />}
+
+    </main>
+  )
 }
