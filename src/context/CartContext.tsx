@@ -2,14 +2,7 @@
 
 "use client"
 
-// Next.js bruger Server Components som default.
-// Men fordi jeg bruger React hooks (useState, useContext),
-// skal denne fil køre i browseren.
-// Derfor skriver jeg "use client" først.
-
-
-import { createContext, useContext, useState } from "react"
-
+import { createContext, useContext, useState, useEffect } from "react"
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +10,7 @@ import { createContext, useContext, useState } from "react"
 |--------------------------------------------------------------------------
 | Her definerer jeg hvordan et produkt i kurven ser ud.
 |
-| TypeScript bruger strukturen til at sikre,
-| at dataen altid har de rigtige felter.
+| TypeScript bruger strukturen til at sikre, at dataen altid har de rigtige felter.
 |
 | Eksempel på et item i cart:
 |
@@ -33,7 +25,7 @@ import { createContext, useContext, useState } from "react"
 */
 
 type CartItem = {
-    id: number
+    product_id: number
     name: string
     price: number
     image: string
@@ -62,6 +54,9 @@ type CartContextType = {
     addToCart: (item: CartItem) => void
     removeFromCart: (id: number) => void
     updateQuantity: (id: number, quantity: number) => void 
+    isOpen: boolean
+    openCart: () => void
+    closeCart: () => void
 }
 
 
@@ -72,8 +67,7 @@ type CartContextType = {
 |--------------------------------------------------------------------------
 | Her opretter jeg selve CartContext.
 |
-| Context fungerer som en global container
-| hvor data kan deles mellem mange komponenter
+| Context fungerer som en global container hvor data kan deles mellem mange komponenter,
 | uden at sende props ned gennem hele komponenttræet.
 |
 */
@@ -88,8 +82,7 @@ const CartContext = createContext<CartContextType | null>(null)
 |--------------------------------------------------------------------------
 | CartProvider er en komponent som "wrapper" hele appen.
 |
-| Når jeg placerer CartProvider i layout.tsx,
-| vil alle sider og komponenter få adgang til cart data.
+| Når jeg placerer CartProvider i layout.tsx, vil alle sider og komponenter få adgang til cart data.
 |
 */
 
@@ -100,16 +93,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     |--------------------------------------------------------------------------
     | STATE: cart
     |--------------------------------------------------------------------------
-    | Her gemmer jeg alle produkter i kurven.
-    |
-    | useState betyder at React holder styr på state
-    | og re-render komponenter når cart ændrer sig.
-    |
-    | Startværdi = tom array
+    | Vi indlæser cart fra localStorage ved start så den overlever refresh.
+    | typeof window === "undefined" tjekker om vi er på serveren,
+    | hvor localStorage ikke findes.
     |
     */
 
-    const [cart, setCart] = useState<CartItem[]>([])
+    const [cart, setCart] = useState<CartItem[]>(() => {
+        if (typeof window === "undefined") return []
+        const saved = localStorage.getItem("cart")
+        return saved ? JSON.parse(saved) : []
+    })
+
+    /*
+    |--------------------------------------------------------------------------
+    | GEM CART I LOCALSTORAGE
+    |--------------------------------------------------------------------------
+    | Hver gang cart ændrer sig, gemmer jeg den i localStorage.
+    | Så er den der stadig næste gang siden loader.
+    |
+    */
+
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cart))
+    }, [cart])
+
 
 
     /*
@@ -135,7 +143,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             |
             */
 
-            const existingItem = prev.find(p => p.id === item.id)
+            const existingItem = prev.find(p => p.product_id === item.product_id)
 
             /*
             --------------------------------------------------------------------------
@@ -148,7 +156,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
             if (existingItem) {
                 return prev.map(p =>
-                    p.id === item.id
+                    p.product_id === item.product_id
                     ? { ...p, quantity: p.quantity + 1 } 
                     : p
                 )
@@ -182,9 +190,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const removeFromCart = (id: number) => {
 
         /* filter() laver en ny liste hvor alle items med dette id fjernes */
-        setCart(prev => prev.filter(item => item.id !== id))
+        setCart(prev => prev.filter(item => item.product_id !== id))
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | FUNCTION: updateQuantity 
+    |--------------------------------------------------------------------------
+    | Denne funktion opdaterer et produkt i kurven.
+    |
+    */
 
     const updateQuantity = (id: number, quantity: number) => {
 
@@ -192,12 +208,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
             // Hvis quantity er 0 eller mindre, fjern produktet helt
             if (quantity <= 0) {
-            return prev.filter(item => item.id !== id)
+            return prev.filter(item => item.product_id !== id)
             }
 
             // Ellers opdater quantity på det rigtige produkt
             return prev.map(item =>
-            item.id === id
+            item.product_id === id
                 ? { ...item, quantity }
                 : item
             )
@@ -205,6 +221,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         })
 
     }
+
+    const [isOpen, setIsOpen] = useState(false)
+    const openCart = () => setIsOpen(true)
+    const closeCart = () => setIsOpen(false)
 
 
     /*
@@ -217,7 +237,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     |
     */
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity }}>
+        <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, isOpen, openCart, closeCart }}>
             {children}
         </CartContext.Provider>
     )

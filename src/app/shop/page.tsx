@@ -26,7 +26,7 @@ import Container from "@/components/layout/Container"
 */
 
 type Product = {
-  id: number
+  product_id: number
   name: string
   description: string
   price: number
@@ -153,7 +153,7 @@ export default function ShopPage() {
       <Container>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
           {filtered.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.product_id} product={product} />
           ))}
         </div>
       </Container>

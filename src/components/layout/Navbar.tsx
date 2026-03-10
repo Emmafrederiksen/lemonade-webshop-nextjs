@@ -5,12 +5,14 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
 import Container from "./Container"
+import { useCart } from "@/context/CartContext"
 
 export default function Navbar() {
 
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { cart, openCart } = useCart()
   
 
   const navRef = useRef<HTMLDivElement>(null)
@@ -50,7 +52,7 @@ export default function Navbar() {
   return (
 
     <nav
-        className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300
+        className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300 border-b border-border
         ${scrolled ? "bg-surface-navbar/95 shadow-md" : "bg-surface-navbar/80"}
         `}
         >
@@ -155,13 +157,16 @@ export default function Navbar() {
 
             {/* Cart */}
             <div className="relative">
-
-              <button className="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-white">
+              
+              <button
+                onClick={openCart}
+                className="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-white"
+              >
                 🛒
               </button>
 
               <span className="absolute -top-2 -right-2 bg-warning text-white text-small w-5 h-5 rounded-full flex items-center justify-center">
-                3
+                {cart.reduce((sum, item) => sum + item.quantity, 0)}
               </span>
 
             </div>

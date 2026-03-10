@@ -1,5 +1,6 @@
 import Container from "@/components/layout/Container"
 import ProductCard from "@/components/product/ProductCard"
+import Link from "next/link"
 
 async function getFeaturedProducts() {
 
@@ -41,9 +42,7 @@ export default async function FeaturedProducts() {
 
             {/* View all */}
             <div className="ml-auto md:ml-0 md:flex md:justify-end">
-                <a href="/shop" className="text-brand-textDark hover:underline">
-                View All
-                </a>
+              <Link href="/shop" className="text-brand-textDark hover:underline">View All</Link>
             </div>
 
         </div>
