@@ -24,7 +24,7 @@ type Props = {
 |--------------------------------------------------------------------------
 | OPTIONS
 |--------------------------------------------------------------------------
-| Vi definerer valgmulighederne udenfor komponenten så de ikke
+| Jeg definerer valgmulighederne udenfor komponenten så de ikke
 | genskabes hver gang komponenten re-renderer.
 |
 */
