@@ -1,6 +1,16 @@
+"use client"
+
 import Container from "@/components/layout/Container"
 import Image from "next/image"
 import React from "react"
+import Link from "next/link"
+
+function scrollToFeatured() {
+  const section = document.getElementById("featured")
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" })
+  }
+}
 
 type HeroProps = {
   title: string
@@ -41,16 +51,16 @@ export default function Hero({
 
               <div className="flex gap-4">
 
-                <button className="px-5 py-3 md:px-6 md:py-3 bg-brand-primary text-white rounded-full font-body font-medium
+                <Link href="/shop" className="px-5 py-3 md:px-6 md:py-3 bg-brand-primary text-white rounded-full font-body font-medium
                 shadow-md hover:shadow-lg hover:brightness-105
-                transition-all duration-200">
+                transition-all duration-300">
                   Order Now
-                </button>
+                </Link>
 
-                <button className="px-5 py-3 md:px-6 md:py-3 border border-border text-brand-textDark bg-surface-secondarybtn
+                <button onClick={scrollToFeatured} className="px-5 py-3 md:px-6 md:py-3 border border-border text-brand-textDark bg-surface-secondarybtn
                 rounded-full font-body font-medium
                 hover:border-brand-primary hover:text-brand-primary
-                transition-all duration-200">
+                transition-all duration-300">
                   View Menu
                 </button>
 

@@ -18,7 +18,7 @@ export default async function FeaturedProducts() {
 
   return (
 
-    <section className="py-20 bg-white">
+    <section id="featured" className="py-20 bg-white">
 
       <Container>
 
