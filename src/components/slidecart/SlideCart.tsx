@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useCart } from "@/context/CartContext"
 import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
 import { useMounted } from "@/hooks/useMounted"
+import { useCartCalculations } from "@/hooks/useCartCalculations"
 
 export default function SlideCart() {
 
@@ -56,9 +57,7 @@ export default function SlideCart() {
   |
   */
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = subtotal >= 15 ? 0 : 3
-  const total = subtotal + delivery
+  const { subtotal, delivery, total } = useCartCalculations(cart)
 
 
   return (

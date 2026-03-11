@@ -8,6 +8,7 @@ import Image from "next/image"
 import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
 import FormInput from "@/components/forminput/FormInput"
 import { useMounted } from "@/hooks/useMounted"
+import { useCartCalculations } from "@/hooks/useCartCalculations"
 
 export default function CheckoutCustomer() {
 
@@ -36,17 +37,20 @@ export default function CheckoutCustomer() {
   
   const mounted = useMounted()
   if (!mounted) return null
+  
 
   /*
   |--------------------------------------------------------------------------
   | BEREGNINGER
   |--------------------------------------------------------------------------
+  | subtotal  → sum af alle produkter (pris × antal)
+  | delivery  → gratis ved $15, ellers fast $3 gebyr
+  | total     → subtotal + delivery
+  |
   */
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = subtotal >= 15 ? 0 : 3
-  const total = subtotal + delivery
-
+  const { subtotal, delivery, total } = useCartCalculations(cart)
+  
   /*
   |--------------------------------------------------------------------------
   | FORM HANDLER
