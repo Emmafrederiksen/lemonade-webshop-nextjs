@@ -14,6 +14,7 @@ import Hero from "@/components/sections/hero/Hero"
 import FilterBar from "@/components/filterbar/FilterBar"
 import ProductCard from "@/components/product/ProductCard"
 import Container from "@/components/layout/Container"
+import ProductCardSkeleton from "@/components/product/ProductCardSkeleton"
 
 
 /*
@@ -42,15 +43,16 @@ export default function ShopPage() {
   |--------------------------------------------------------------------------
   | STATE
   |--------------------------------------------------------------------------
-  | products  → alle produkter hentet fra API
-  | sort      → hvilken sortering er valgt (default: billigst først)
-  | filter    → hvilken flavour er valgt (default: alle)
+  | products  – alle produkter hentet fra API
+  | sort      – hvilken sortering er valgt (default: billigst først)
+  | filter    – hvilken flavour er valgt (default: alle)
   |
   */
 
   const [products, setProducts] = useState<Product[]>([])
   const [sort, setSort] = useState("price-low")
   const [filter, setFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
 
 
   /*
@@ -65,11 +67,12 @@ export default function ShopPage() {
   */
 
   useEffect(() => {
-
     fetch("/api/products")
       .then(res => res.json())
-      .then(data => setProducts(data))
-
+      .then(data => {
+        setProducts(data)
+        setLoading(false)
+      })
   }, [])
 
 
@@ -156,7 +159,23 @@ export default function ShopPage() {
             <ProductCard key={product.product_id} product={product} />
           ))}
         </div>
+
+
+        {/* Produktgrid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))
+            : filtered.map(product => (
+                <ProductCard key={product.product_id} product={product} />
+              ))
+          }
+
+        </div>
       </Container>
+      
 
     </main>
   )
