@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import Container from "@/components/layout/Container"
 import Image from "next/image"
 import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
+import FormInput from "@/components/forminput/FormInput"
 
 export default function CheckoutCustomer() {
 
@@ -23,6 +24,15 @@ export default function CheckoutCustomer() {
   const [confirmName, setConfirmName] = useState("")
 
   const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+  })
+
+  const [errors, setErrors] = useState ({
     fullName: "",
     email: "",
     phone: "",
@@ -67,10 +77,28 @@ export default function CheckoutCustomer() {
 
   async function handleSubmit() {
 
-    if (!form.fullName || !form.email || !form.address) {
-      alert("Please fill in all required fields")
-      return
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDERING
+    |--------------------------------------------------------------------------
+    | Tjekker hvert felt og viser en fejlbesked under det relevante input.
+    |
+    */
+
+    const newErrors = {
+      fullName: form.fullName ? "" : "Full name is required",
+      email: form.email ? "" : "Email is required",
+      phone: form.phone ? "" : "Phone number is required",
+      address: form.address ? "" : "Address is required",
+      city: form.city ? "" : "City is required",
+      postalCode: form.postalCode ? "" : "Postal code is required",
     }
+
+    setErrors(newErrors)
+
+    // Stop hvis der er fejl
+    const hasErrors = Object.values(newErrors).some(e => e !== "")
+    if (hasErrors) return
 
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -111,40 +139,37 @@ export default function CheckoutCustomer() {
               </h2>
             </div>
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">👤</span>
-              <input
-                name="fullName"
-                value={form.fullName}
-                onChange={handleChange}
-                placeholder="Full name"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="fullName"
+              value={form.fullName}
+              onChange={handleChange}
+              placeholder="Full name"
+              icon="👤"
+              error={errors.fullName}
+              onClearError={() => setErrors(prev => ({ ...prev, fullName: "" }))}
+            />
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">✉️</span>
-              <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Email"
-                type="email"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="Email"
+              type="email"
+              icon="✉️"
+              error={errors.email}
+              onClearError={() => setErrors(prev => ({ ...prev, email: "" }))}
+            />
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">📞</span>
-              <input
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="Phone number"
-                type="tel"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              placeholder="Phone number"
+              type="tel"
+              icon="📞"
+              error={errors.phone}
+              onClearError={() => setErrors(prev => ({ ...prev, phone: "" }))}
+            />
 
           </div>
 
@@ -160,38 +185,35 @@ export default function CheckoutCustomer() {
               </h2>
             </div>
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">🏠</span>
-              <input
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                placeholder="Address"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="Address"
+              icon="🏠"
+              error={errors.address}
+              onClearError={() => setErrors(prev => ({ ...prev, address: "" }))}
+            />
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">📍</span>
-              <input
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-                placeholder="City"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              placeholder="City"
+              icon="📍"
+              error={errors.city}
+              onClearError={() => setErrors(prev => ({ ...prev, city: "" }))}
+            />
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-textMuted">✉️</span>
-              <input
-                name="postalCode"
-                value={form.postalCode}
-                onChange={handleChange}
-                placeholder="Postal Code"
-                className="w-full border border-border rounded-xl pl-10 pr-4 py-3 text-small text-brand-textDark placeholder:text-brand-textMuted focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition"
-              />
-            </div>
+            <FormInput
+              name="postalCode"
+              value={form.postalCode}
+              onChange={handleChange}
+              placeholder="Postal Code"
+              icon="✉️"
+              error={errors.postalCode}
+              onClearError={() => setErrors(prev => ({ ...prev, postalCode: "" }))}
+            />
 
           </div>
 
