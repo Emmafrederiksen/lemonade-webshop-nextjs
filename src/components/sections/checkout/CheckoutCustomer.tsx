@@ -2,24 +2,17 @@
 
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Container from "@/components/layout/Container"
 import Image from "next/image"
 import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
 import FormInput from "@/components/forminput/FormInput"
+import { useMounted } from "@/hooks/useMounted"
 
 export default function CheckoutCustomer() {
 
-  /*
-  |--------------------------------------------------------------------------
-  | HOOKS
-  |--------------------------------------------------------------------------
-  */
-
   const router = useRouter()
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart()
-
-  const [mounted, setMounted] = useState(false)
   const [confirmItem, setConfirmItem] = useState<number | null>(null)
   const [confirmName, setConfirmName] = useState("")
 
@@ -40,11 +33,8 @@ export default function CheckoutCustomer() {
     city: "",
     postalCode: "",
   })
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
+  
+  const mounted = useMounted()
   if (!mounted) return null
 
   /*

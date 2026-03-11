@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useCart } from "@/context/CartContext"
 import ConfirmDialog from "@/components/confirmdialog/ConfirmDialog"
+import { useMounted } from "@/hooks/useMounted"
 
 export default function SlideCart() {
 
@@ -40,12 +41,9 @@ export default function SlideCart() {
   |
   */
  
-  const [mounted, setMounted] = useState(false)
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+  const mounted = useMounted()
+  if (!mounted) return null
 
-    if (!mounted) return null
 
 
   /*
