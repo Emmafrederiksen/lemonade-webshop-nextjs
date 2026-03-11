@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
 import { useState, useEffect } from "react"
 import Container from "@/components/layout/Container"
@@ -12,12 +13,10 @@ export default function CheckoutCustomer() {
   |--------------------------------------------------------------------------
   | HOOKS
   |--------------------------------------------------------------------------
-  | Alle hooks skal være øverst — Rules of Hooks.
-  | Ingen hooks må kaldes efter en tidlig return.
-  |
   */
 
-  const { cart, removeFromCart, updateQuantity } = useCart()
+  const router = useRouter()
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart()
 
   const [mounted, setMounted] = useState(false)
   const [confirmItem, setConfirmItem] = useState<number | null>(null)
@@ -36,17 +35,7 @@ export default function CheckoutCustomer() {
     setMounted(true)
   }, [])
 
-  /*
-  |--------------------------------------------------------------------------
-  | MOUNTED CHECK
-  |--------------------------------------------------------------------------
-  | Forhindrer hydration fejl fordi localStorage ikke findes på serveren.
-  | Alle hooks er kaldt inden denne check — det er påkrævet af React.
-  |
-  */
-
   if (!mounted) return null
-
 
   /*
   |--------------------------------------------------------------------------
@@ -58,7 +47,6 @@ export default function CheckoutCustomer() {
   const delivery = subtotal >= 15 ? 0 : 3
   const total = subtotal + delivery
 
-
   /*
   |--------------------------------------------------------------------------
   | FORM HANDLER
@@ -69,6 +57,38 @@ export default function CheckoutCustomer() {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | SUBMIT HANDLER
+  |--------------------------------------------------------------------------
+  | Validerer form, sender ordre til API, rydder cart og navigerer til owner.
+  |
+  */
+
+  async function handleSubmit() {
+
+    if (!form.fullName || !form.email || !form.address) {
+      alert("Please fill in all required fields")
+      return
+    }
+
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer: form,
+        items: cart
+      })
+    })
+
+    const data = await res.json()
+
+    if (data.success) {
+      clearCart()
+      router.push("/checkout?view=owner")
+    }
+
+  }
 
   return (
 
@@ -76,10 +96,8 @@ export default function CheckoutCustomer() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
 
-
         {/* VENSTRE — Formularer */}
         <div className="flex flex-col gap-6">
-
 
           {/* Kontaktinfo */}
           <div className="border border-border rounded-2xl p-6 flex flex-col gap-4">
@@ -130,7 +148,6 @@ export default function CheckoutCustomer() {
 
           </div>
 
-
           {/* Leveringsadresse */}
           <div className="border border-border rounded-2xl p-6 flex flex-col gap-4">
 
@@ -178,9 +195,11 @@ export default function CheckoutCustomer() {
 
           </div>
 
-
           {/* Continue knap */}
-          <button className="w-full bg-brand-primary text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition">
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-brand-primary text-white rounded-full py-3 font-body font-semibold hover:brightness-105 transition"
+          >
             Continue to payment
           </button>
 
@@ -194,7 +213,6 @@ export default function CheckoutCustomer() {
 
         </div>
 
-
         {/* HØJRE — Order Summary */}
         <div className="border border-border rounded-2xl p-6 flex flex-col gap-4 self-start">
 
@@ -202,7 +220,6 @@ export default function CheckoutCustomer() {
             Order Summary
           </h2>
 
-          {/* Delivery banner */}
           <div className={`px-4 py-2 rounded-xl border text-small flex items-center gap-2
             ${delivery === 0
               ? "border-success/30 bg-success/5 text-success-DEFAULT"
@@ -215,7 +232,6 @@ export default function CheckoutCustomer() {
             }
           </div>
 
-          {/* Produkter */}
           <div className="flex flex-col gap-3">
 
             {cart.map(item => (
@@ -292,7 +308,6 @@ export default function CheckoutCustomer() {
 
           </div>
 
-          {/* Totaler */}
           <div className="flex flex-col gap-2 pt-2">
 
             <div className="flex justify-between text-small text-brand-textMuted">

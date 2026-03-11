@@ -45,6 +45,13 @@ export async function GET() {
     [order.order_id]
   )
 
-  return Response.json({ order, items })
+  return Response.json({
+    order,
+    items: items.map((item: any) => ({
+        ...item,
+        cost_per_unit: Number(item.cost_per_unit),
+        price: Number(item.price)
+    }))
+    })
 
 }

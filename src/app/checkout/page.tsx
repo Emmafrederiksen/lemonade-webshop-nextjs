@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import CheckoutCustomer from "@/components/sections/checkout/CheckoutCustomer"
 import CheckoutOwner from "@/components/sections/checkout/CheckoutOwner"
 
@@ -8,12 +9,29 @@ type View = "customer" | "owner"
 
 export default function CheckoutPage() {
 
+  const searchParams = useSearchParams()
   const [view, setView] = useState<View>("customer")
+
+  /*
+  |--------------------------------------------------------------------------
+  | LÆS VIEW FRA URL
+  |--------------------------------------------------------------------------
+  | Når brugeren checker ud, redirecter vi til /checkout?view=owner
+  | Her læser vi den parameter og sætter view automatisk.
+  |
+  */
+
+  useEffect(() => {
+    const viewParam = searchParams.get("view")
+    if (viewParam === "owner") {
+      setView("owner")
+    }
+  }, [searchParams])
+
 
   return (
     <main>
 
-      {/* Header med toggle */}
       <div className="bg-heroGradient py-12 flex flex-col items-center gap-6">
 
         <h1 className="font-heading text-heading-xl text-brand-textDark">
@@ -50,7 +68,6 @@ export default function CheckoutPage() {
 
       </div>
 
-      {/* Indhold */}
       {view === "customer" ? <CheckoutCustomer /> : <CheckoutOwner />}
 
     </main>
