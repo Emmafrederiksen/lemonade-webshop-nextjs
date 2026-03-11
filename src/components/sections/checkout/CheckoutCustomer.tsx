@@ -71,6 +71,10 @@ export default function CheckoutCustomer() {
 
   async function handleSubmit() {
 
+    //Tjek om kurven er tom
+    if (cart.length === 0) return
+
+    
     /*
     |--------------------------------------------------------------------------
     | VALIDERING
@@ -120,6 +124,13 @@ export default function CheckoutCustomer() {
 
         {/* VENSTRE — Formularer */}
         <div className="flex flex-col gap-6">
+
+          {/* Tom kurv advarsel */}
+          {cart.length === 0 && (
+            <div className="border border-danger-text/30 bg-danger-bg/5 rounded-xl px-4 py-3 text-small text-danger-text flex items-center gap-2">
+              ❌ Your cart is empty — add some lemonades first!
+            </div>
+          )}
 
           {/* Kontaktinfo */}
           <div className="border border-border rounded-2xl p-6 flex flex-col gap-4">
