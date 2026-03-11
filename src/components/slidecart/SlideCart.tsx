@@ -145,12 +145,13 @@ export default function SlideCart() {
               Add some fresh lemonade!
             </p>
 
-            <button
+            <Link 
+              href="/shop"
               onClick={closeCart}
               className="bg-brand-primary text-white rounded-full px-6 py-2 text-small hover:brightness-105 transition"
             >
               Browse products
-            </button>
+            </Link>
 
           </div>
 
