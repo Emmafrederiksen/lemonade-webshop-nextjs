@@ -78,6 +78,7 @@ export default function Hero({
               alt="Hero image"
               width={520}
               height={520}
+              priority
               className="w-full max-w-md md:max-w-xl lg:max-w-2xl"
             />
 
