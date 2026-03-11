@@ -22,7 +22,7 @@ type Props = {
 }
 
 
-export default function ProductCard(props: Props) {
+export default function ProductCard({ product }: Props) {
 
   /*
   |--------------------------------------------------------------------------
@@ -50,10 +50,10 @@ export default function ProductCard(props: Props) {
 
   function handleAddToCart() {
     addToCart({
-      product_id: props.product.product_id,
-      name: props.product.name,
-      price: props.product.price,
-      image: props.product.image,
+      product_id: product.product_id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
       quantity: 1,
     })
     openCart()
@@ -64,29 +64,29 @@ export default function ProductCard(props: Props) {
 
     <div className="bg-surface-slidecart rounded-card shadow-card p-4 flex flex-col h-full transition duration-300 hover:-translate-y-1 hover:shadow-lg">
 
-      <div className="bg-cardGradient rounded-xl flex justify-center">
+      <div className="bg-cardGradient rounded-xl relative h-[350px] justify-center">
         <Image
-          src={`/${props.product.image}`}
-          alt={props.product.name}
-          width={250}
-          height={250}
+          src={`/${product.image}`}
+          alt={product.name}
+          fill
+          className="object-contain p-4"
         />
       </div>
 
       <div className="mt-5 flex justify-between items-center">
 
         <h3 className="font-heading text-heading-md text-brand-textDark">
-          {props.product.name}
+          {product.name}
         </h3>
 
         <span className="font-heading text-heading-md text-brand-textDark">
-          ${Number(props.product.price).toFixed(2)}
+          ${Number(product.price).toFixed(2)}
         </span>
 
       </div>
 
       <p className="text-body text-brand-textDark mt-4 mb-6">
-        {props.product.description}
+        {product.description}
       </p>
 
       {/*
