@@ -1,6 +1,7 @@
 import Container from "@/components/layout/Container"
 import ProductCard from "@/components/product/ProductCard"
 import Link from "next/link"
+import { Product } from "@/types/product"
 
 async function getFeaturedProducts() {
 
@@ -49,7 +50,7 @@ export default async function FeaturedProducts() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-          {products.map((product: any) => (
+          {products.map((product: Product) => (
             <ProductCard key={product.product_id} product={product} />
           ))}
 

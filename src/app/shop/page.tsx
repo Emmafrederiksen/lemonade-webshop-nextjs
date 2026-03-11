@@ -15,25 +15,7 @@ import FilterBar from "@/components/filterbar/FilterBar"
 import ProductCard from "@/components/product/ProductCard"
 import Container from "@/components/layout/Container"
 import ProductCardSkeleton from "@/components/product/ProductCardSkeleton"
-
-
-/*
-|--------------------------------------------------------------------------
-| TYPE: Product
-|--------------------------------------------------------------------------
-| Beskriver hvordan et produkt ser ud når det kommer fra API'et.
-| TypeScript bruger denne til at sikre vi ikke tilgår felter der ikke findes.
-|
-*/
-
-type Product = {
-  product_id: number
-  name: string
-  description: string
-  price: number
-  image: string
-  flavor: string
-}
+import { Product } from "@/types/product"
 
 
 export default function ShopPage() {

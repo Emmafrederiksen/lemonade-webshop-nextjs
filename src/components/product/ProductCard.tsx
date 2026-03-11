@@ -2,25 +2,11 @@
 
 import Image from "next/image"
 import { useCart } from "@/context/CartContext"
-
-/*
-|--------------------------------------------------------------------------
-| TYPES
-|--------------------------------------------------------------------------
-*/
-
-type Product = {
-  product_id: number
-  name: string
-  description: string
-  price: number
-  image: string
-}
+import { Product } from "@/types/product"
 
 type Props = {
   product: Product
 }
-
 
 export default function ProductCard({ product }: Props) {
 
