@@ -136,13 +136,7 @@ export default function ShopPage() {
       */}
 
       <Container>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
-          {filtered.map(product => (
-            <ProductCard key={product.product_id} product={product} />
-          ))}
-        </div>
-
-
+       
         {/* Produktgrid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
 
