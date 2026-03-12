@@ -1,25 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import CheckoutCustomer from "@/components/sections/checkout/CheckoutCustomer"
 import CheckoutOwner from "@/components/sections/checkout/CheckoutOwner"
 
 type View = "customer" | "owner"
 
-export default function CheckoutPage() {
+/*
+|--------------------------------------------------------------------------
+| CheckoutContent
+|--------------------------------------------------------------------------
+| useSearchParams kræver Suspense i Next.js production builds.
+| Vi udtrækker indholdet til en separat komponent og wrapper den i Suspense.
+|
+*/
+
+function CheckoutContent() {
 
   const searchParams = useSearchParams()
   const [view, setView] = useState<View>("customer")
-
-  /*
-  |--------------------------------------------------------------------------
-  | LÆS VIEW FRA URL
-  |--------------------------------------------------------------------------
-  | Når brugeren checker ud, redirecter vi til /checkout?view=owner
-  | Her læser vi den parameter og sætter view automatisk.
-  |
-  */
 
   useEffect(() => {
     const viewParam = searchParams.get("view")
@@ -27,7 +27,6 @@ export default function CheckoutPage() {
       setView("owner")
     }
   }, [searchParams])
-
 
   return (
     <main>
@@ -71,5 +70,17 @@ export default function CheckoutPage() {
       {view === "customer" ? <CheckoutCustomer /> : <CheckoutOwner />}
 
     </main>
+  )
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center py-20">
+        <p className="text-brand-textMuted">Loading...</p>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   )
 }
