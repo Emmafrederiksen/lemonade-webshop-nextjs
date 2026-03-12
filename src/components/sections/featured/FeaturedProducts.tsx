@@ -4,13 +4,13 @@ import Link from "next/link"
 import { Product } from "@/types/product"
 
 async function getFeaturedProducts() {
-
-  const res = await fetch("http://localhost:3000/api/products/featured", {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  
+  const res = await fetch(`${baseUrl}/api/products/featured`, {
     cache: "no-store",
   })
 
   return res.json()
-
 }
 
 export default async function FeaturedProducts() {
